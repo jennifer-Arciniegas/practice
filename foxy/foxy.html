@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Document</title>
+</head>
+<body class=" bg-black">
+    <main>
+        <div class=" w-24 h-20 absolute transition-all duration-300 rounded-full shadow-lg  shadow-blue-500/50">
+            <img  src="fox.png" alt="fox">
+        </div>
+    </main>
+</body>
+<script>
+    const fox = document.querySelector("div");
+    // w-24 son 96px
+    //h-20 son 80px
+    function mover(){
+        const actualPositionX = window.innerWidth - 96;
+        const actualPositionY = window.innerHeight - 80;
+
+        const newPositionX = Math.random() * actualPositionX;
+        const newPositionY = Math.random() * actualPositionY;
+
+        fox.style.left = newPositionX + "px";
+        fox.style.top = newPositionY + "px";
+
+    }
+    fox = document.addEventListener("mouseover", mover)
+</script>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <main>
+
+    </main>
+    
+</body>
+<script>
+    async function ver(id_pokemon){
+       
+        try{
+            console.log(`buscando info para ${id_pokemon}`);
+            let llamarAPI = await fetch(`https://pokeapi.co/api/v2/pokemon/${id_pokemon}`);
+            const data = await llamarAPI.json()
+            if(!llamarAPI.ok){
+                throw new Error("error al cargar el api ")
+            }
+
+            const pokeinfo = {
+                name: data.name,
+                Imagen: data.results
+               // attack: data.stats[k].stat.name,
+                //defence: data.stats[k].base_stat,
+                //speed: base_experience,
+            };
+            console.log("informacion pokemon")
+            console.log(pokeinfo)
+            
+
+
+        } catch(error){
+            console.error("ERROR", error.message);
+        }
+
+    }
+    async function main(){
+        await ver(3);
+        await ver(22);
+
+    }
+    main()
+    
+</script>
+</html>
