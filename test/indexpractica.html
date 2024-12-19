@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Document</title>
+</head>
+<body >
+    <main class="flex flex-cols-2">
+        <div class="bg-rose-100 w-full p-5">
+
+            <div class="bg-sky-200 w-64">                
+                <form action="">
+                    <h2>Jugardor 1</h2>
+                    <br>
+                    <label for="alias1">Alias: </label>
+                    <input type="text" name="alias1" id="alias1">
+
+
+                </form>
+            </div> <br>
+            <div class="bg-green-200 w-64">                
+                <form action="">
+                    <h2>Jugardor 2</h2>
+                    <br>
+                    <label for="alias2">Alias: </label>
+                    <input type="text" name="alias2" id="alias2">
+
+
+                </form>
+            </div>
+            <br><br>
+            <button id="comenzoJuego" class="bg-indigo-300  hover:bg-indigo-400 rounded-lg">Jugar!!</button>
+            <br><br>
+            <button id="historial" class="bg-indigo-300  hover:bg-indigo-400 rounded-lg">Historial Ganadores </button>
+            
+            <div id="espacioHitorial">
+
+            </div>
+        </div>
+        <div class="bg-sky-200 w-full flex flex-col items-center  p-10">
+            <p id="turnoJugador">turno de:</p>
+            <br><br>
+
+            <div id="tablero"  class=" bg-black w-80 h-80 grid grid-cols-3  grid-rows-3 gap-2">
+                <div  class="bg-white rounded-lg"></div>
+                <div  class="bg-white rounded-lg"></div>
+                <div  class="bg-white rounded-lg"></div>
+                <div  class="bg-white rounded-lg"></div>
+                <div  class="bg-white rounded-lg"></div>
+                <div  class="bg-white rounded-lg"></div>
+                <div  class="bg-white rounded-lg"></div>
+                <div  class="bg-white rounded-lg"></div>
+                <div  class="bg-white rounded-lg"></div>
+            
+
+            </div>
+            <label for="display">Ganador</label>
+            <input type="text" name="display" id="display" class="h-10" readonly>
+        </div>
+    </main>
+</body>
+<script>
+document.addEventListener("DOMContentLoaded", ()=>{
+        const comenzarJuego = document.getElementById("comenzoJuego");
+        const tablero = document.getElementById("tablero");
+        const display = document.getElementById("display");
+        const turnoJugador = document.getElementById("turnoJugador");
+        const espaciohistorial = document.getElementById("espacioHitorial");
+        const showhistorial = document.getElementById("historial");
+        const celdas = tablero.children
+
+        // constantes que cambian sus valores en cada ronda
+        let jugador1, jugador2, jugadorActual;
+        let JuegoActivo = false;
+        let estadoJuego = ["", "", "", "", "", "", "", "", ""];
+        let Historial = JSON.parse(localStorage.getItem("historial"))  || []; // carga el historial al presionar el boton
+
+        //conbinacines ganadoras
+        const combinaciones =[
+                [0,1,2], //columas
+                [3,4,5],
+                [6,7,8],
+                [0,3,6], //filas
+                [1,4,6],
+                [2,5,8],
+                [0,4,8],//diagonal
+                [2,4,6]
+        ];
+        comenzarJuego.addEventListener("click", iniciarJuego); // cuando se de click iniciar el jugo
+        showhistorial.addEventListener("click", showTableHistorial); //cuando se de click en el boton mostrar la tabla
+        //funciones 
+        function iniciarJuego(){
+        //prepara el juego
+                let jugador1 = document.getElementById("alias1").value || "jugador 1";
+                let jugador2 = document.getElementById("alias2").value || "jugador 2";
+
+                if(!jugador1 || !jugador2){
+                        alert("ingrese los nombre de los jugadores");
+                        return;
+                }
+                JuegoActivo = true;
+                display.value = "";
+                jugadorActual= jugador1;
+                turnoJugador.textContent =`es turno de:  ${jugadorActual}`;
+                estadoJuego = ["", "", "", "", "", "", "", "", ""];
+
+                for (let celda of celdas) {
+                        celda.textContent= "";
+                        celda.removeEventListener("click", manejarclick)
+                        celda.replaceWith(celda.cloneNode(true))          
+                }
+                const nuevacelda  = tablero.children;
+                for ( let celda of nuevacelda) {
+                        celda.addEventListener("click", manejarclick);
+                        
+                }
+        }
+        function manejarclick(e){
+                // maneja los click del tablero 
+                const celdaIndex = Array.from(celdas).indexOf(e.target)
+                if(estadoJuego[celdaIndex] !== "" || !JuegoActivo ) return;
+                estadoJuego[celdaIndex] = jugadorActual === jugador1 ? "X" : "O"
+                e.target.textContent = estadoJuego[celdaIndex];
+                
+                //if de verificar ganador 
+                if(verificarGanador()){
+                        display.value = `${jugadorActual} ah Ganado!`
+                        JuegoActivo = false
+                        guardarenHistorial(jugadorActual);
+                }else if(!estadoJuego.includes("")){
+                        display.value = "empate"
+                        JuegoActivo = false
+                        guardarenHistorial("empate")
+                }else{
+                        jugadorActual = jugadorActual === jugador1 ? jugador2 : jugador1;
+                        turnoJugador.textContent =`es turno de:  ${jugadorActual}`;             
+                }
+
+
+
+        }
+        function verificarGanador(){
+                //verifica el ganador y envia los datos al historia
+                for( let combinacion of combinaciones){
+                        if(
+                                estadoJuego[combinacion[0]] &&
+                                estadoJuego[combinacion[0]] === estadoJuego[combinacion[1]]&&
+                                estadoJuego[combinacion[0]] === estadoJuego[combinacion[2]]
+                        )
+                        return  true;
+                }
+                return false;
+        }
+        function guardarenHistorial(ganador){
+                //guarda los resultados
+                // guarda la fecha 
+                const fecha = new Date().toLocaleString(); //fecha y hora locales
+                Historial.push({ganador, fecha})
+                localStorage.setItem("historial", JSON.stringify(Historial))
+
+
+        }
+        function showTableHistorial(){
+                //crear el elemento tabla en el div espaciohisotial  mostrando los ganadores
+                //eliminar tabla existente
+                const tablaanterior = document.querySelectorAll(".tablita-historial")
+                tablaanterior.forEach(tabla => tabla.remove());                       
+                
+                //crear div
+                const divHistorial = document.createElement("div")
+                divHistorial.classList.add("mt-5","tablita-historial")
+                // se crea la tabla donde va 
+                const tabla = document.createElement("table")
+                tabla.classList.add("border", "border-indigo-700", "mt-5", "table-auto")
+                //cabecera
+                const cabcera = document.createElement("tr")
+                cabcera.innerHTML=`
+                <th>Ganador</th>
+                <th> fecha y hora </th>
+                `;
+                tabla.appendChild(cabcera);
+                //
+                Historial.forEach((element) => {
+                        const row = document.createElement("tr")
+                        row.innerHTML=`
+                        <td>${element.ganador}</td>
+                        <td>${element.fecha}</td>
+                        `;
+                        tabla.appendChild(row)
+                });
+                espaciohistorial.appendChild(divHistorial);
+                divHistorial.appendChild(tabla);
+        }
+       
+        
+        
+
+
+})
+
+
+</script>
+</html>

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Document</title>
+</head>
+<body >
+    <main class="flex flex-cols-2">
+        <div  class="bg-rose-100 w-full p-5">
+
+            <div class="bg-sky-200 w-64">                
+                <form action="">
+                    <h2>Jugardor 1</h2>
+                    <br>
+                    <label for="alias1">Alias: </label>
+                    <input type="text" name="alias1" id="alias1">
+
+
+                </form>
+            </div> <br>
+            <div class="bg-green-200 w-64">                
+                <form action="">
+                    <h2>Jugardor 2</h2>
+                    <br>
+                    <label for="alias2">Alias: </label>
+                    <input type="text" name="alias2" id="alias2">
+
+
+                </form>
+            </div>
+            <br><br>
+            <button id="comenzoJuego" class="bg-indigo-300  hover:bg-indigo-400 rounded-lg">Jugar!!</button>
+            <br><br>
+            <button id="Historial" class="bg-indigo-300  hover:bg-indigo-400 rounded-lg">Historial de ganadores</button>
+            <div id="insertarHistorial">
+
+            </div>
+        </div>
+        <div class="bg-sky-200 w-full   p-10 flex flex-col items-center">
+            <p id="turnoJugador">Turno de: </p>
+            <br>
+            
+
+            <div id="tablero" class=" bg-black w-80 h-80 grid grid-cols-3  grid-rows-3 gap-2">
+                <div class="bg-white rounded-lg"></div>
+                <div class="bg-white rounded-lg"></div>
+                <div class="bg-white rounded-lg"></div>
+                <div class="bg-white rounded-lg"></div>
+                <div class="bg-white rounded-lg"></div>
+                <div class="bg-white rounded-lg"></div>
+                <div class="bg-white rounded-lg"></div>
+                <div class="bg-white rounded-lg"></div>
+                <div class="bg-white rounded-lg"></div>
+
+            </div>
+            <br>
+            <label for="display">Ganador</label>
+            <input type="text" name="display" id="display" class="h-10" readonly>
+        </div>
+    </main>
+</body>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const comenzarJuego = document.getElementById("comenzoJuego");
+        const tablero = document.getElementById("tablero");
+        const display = document.getElementById("display");
+        const turnoJugador = document.getElementById("turnoJugador");
+        const celdas = tablero.children;
+        const showHistorial = document.getElementById("Historial");
+
+        let jugador1, jugador2, jugadorActual;
+        let JuegoActivo = false;
+        let estadoJuego = ["","","","","","","","","",""];
+        let Historial = JSON.parse(localStorage.getItem("Historial")) || []; //cargar el historial
+
+        const combinaciones = [
+            [0,1,2],
+            [3,4,5],
+            [6,7,8], //filas
+            [0,3,6],
+            [1,4,7],
+            [2,5,8],//columna
+            [0,4,8],
+            [2,4,6],//diagonal
+        ];
+        comenzarJuego.addEventListener("click", iniciarJuego)
+        showHistorial.addEventListener("click", showTablaHistorial )
+
+        function iniciarJuego(){
+            jugador1 = document.getElementById("alias1").value || "jugador 1";
+            jugador2 = document.getElementById("alias2").value || "jugador 2";
+
+            if(!jugador1|| !jugador2){
+                alert("ingresa el nombre para ambos jugadores.");
+                return;
+            }
+
+            JuegoActivo = true
+            jugadorActual = jugador1;
+            turnoJugador.textContent = `turno de: ${jugadorActual}`
+            display.value = "",
+            estadoJuego = ["","","","","","","","","",""];
+
+            for(let celda of celdas){
+                celda.textContent =""; //limpia las celdas
+                celda.removeEventListener("click",manejarclick)
+                celda.replaceWith(celda.cloneNode(true)) //remplaza las celdas por un clon
+            }
+            const nuevacelda = tablero.children
+            for(let celda of nuevacelda){
+                celda.addEventListener("click", manejarclick)
+            }
+
+        }
+        function manejarclick(e){
+            const celdaIndex = Array.from(celdas).indexOf(e.target);
+
+            if (estadoJuego[celdaIndex] !== "" || !JuegoActivo) return;
+            estadoJuego[celdaIndex]=jugadorActual === jugador1 ? "X" : "O"
+            e.target.textContent = estadoJuego[celdaIndex];
+
+            if(verificarGanador()){
+                display.value = `${jugadorActual} ha Ganado!`;
+                guardarenHistorial(jugadorActual);
+                JuegoActivo = false;          
+            } else if (!estadoJuego.includes("")){
+                display.value= "empate";
+                guardarenHistorial("empate")
+                JuegoActivo= false;
+
+            } else{
+                jugadorActual = jugadorActual === jugador1 ? jugador2 : jugador1;
+                turnoJugador.textContent = `turno de: ${jugadorActual}`;
+            }
+        }
+
+        function verificarGanador(){
+            for (let combinacion of combinaciones) {
+                if(
+                    estadoJuego[combinacion[0]]&&
+                    estadoJuego[combinacion[0]] === estadoJuego[combinacion[1]] &&
+                    estadoJuego[combinacion[0]] === estadoJuego[combinacion[2]]
+                ){
+                    return true;
+                }
+                
+            }
+            return false;
+        }
+         //tabla de historial------------------------
+        function guardarenHistorial(ganador){
+            const fecha =new Date().toLocaleString() //hora y fecha actual
+            Historial.push({ganador, fecha})
+            localStorage.setItem("historial", JSON.stringify(Historial)); 
+        }
+
+        function showTablaHistorial(){
+            //eliminar tabla existente
+            const tablaanterior = document.querySelectorAll (".tablita-historial")
+            tablaanterior.forEach(tabla => tabla.remove());
+
+            //crear tabla
+            const divHistorial = document.createElement("div")
+            divHistorial.classList.add("mt-5","tablita-historial");
+
+            const tabla = document.createElement("table")
+            tabla.classList.add("table-auto", "mt-5", "border-collapse", "border", "border-inidigo-500")
+
+            const cabecera = document.createElement("tr")
+            cabecera.innerHTML =`
+            <th>Ganador</th>
+            <th>Fecha y hora</th>
+            `;
+            tabla.appendChild(cabecera);
+
+            Historial.forEach((elemento) => {
+                const row = document.createElement("tr")
+                row.innerHTML=`
+                <td>${elemento.ganador}</td>
+                <td>${elemento.fecha}</td>`;
+                tabla.appendChild(row)
+                
+            });
+            
+            
+            const espacioHitorial = document.getElementById("insertarHistorial")
+            // mostrar en pantalla
+            espacioHitorial.appendChild(divHistorial);
+            divHistorial.appendChild(tabla);
+        }
+    })
+
+
+
+        
+
+
+
+</script>
+</html>
