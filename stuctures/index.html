@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>probemos prompt</h1>
+</body>
+<script>
+    let change = document.querySelector("h1")
+
+   let nombre = window.prompt("cual es tu nombre?", "jennifer");
+    alert("su nombre es " + nombre)
+    let respuesta = window.confirm("desea seguir?")
+    if(respuesta == true){
+       
+        change.textContent="gracias por aceptar"
+        
+    }else{
+        change.textContent="please accept the terms and conditions"
+    }
+</script>
+</html>

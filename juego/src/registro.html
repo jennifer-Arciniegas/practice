@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+      <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <main class=" flex justify-center    " >
+        <div class="bg-rose-100  w-96 m-32  p-5  h-96 flex justify-center  flex items-center ">
+            <form action="" id="formu-registro">
+                <h2>Registrece!!</h2>
+                <br>
+                <label for="nombre">Nombre</label>
+                <input type="text" name="nombre" id="nombre" class=" rounded-lg m-1 p-1  focus:bg-white focus:border-purple-500 focus:outline-none border border-gray-300" required>
+                <br>
+                <label for="edad">Edad</label>
+                <input type="text" id="edad" name="edad" class="rounded-lg m-1 p-1 focus:bg-white focus:border-purple-500 focus:outline-none border border-gray-300" required>
+                <br>
+                <label for="genero">Genero</label >
+                <select name="genero" id="genero" class=" rounded-lg m-1 p-1 focus:bg-white focus:border-purple-500 focus:outline-none border border-gray-300" required>
+                    <option value="hombre">Hombre</option>
+                    <option value="mujer">Mujer</option>
+                    <option value="serLuz">ser de luz</option>
+                    <option value="criaturitadelSeñor">Criaturita del señor</option>
+                </select>
+                <br><br>    
+                <label for="user">Usuario</label>
+                <input type="text" name="user" id="user" class="rounded-lg m-1 p-1 focus:bg-white focus:border-purple-500 focus:outline-none border border-gray-300" required>
+                <br>
+                <label for="password">contraseña</label>
+                <input type="password" id="password" name="password" class="rounded-lg m-1 p-1 focus:bg-white focus:border-purple-500 focus:outline-none border border-gray-300" required>
+                <br>
+                <input type="radio" name="terminos" id="terminos" required> Estoy de acuerdo con los terminos y condiciones 
+                <br> 
+                <div class="flex justify-center">
+                    <button id="registrar" type="submit" class="bg-sky-300 border: rounded-lg p-1 m-1  ">Registrar</button>
+                </div>
+               
+
+                
+            </form>
+        </div>
+    </main>
+</body>
+<script>
+    function registrarCuenta(){
+        document.getElementById("formu-registro").addEventListener("submit", (event) => {
+            event.preventDefault();
+            
+            const formData = {
+                nombre: document.getElementById("nombre").value,
+                edad: document.getElementById("edad").value,
+                genero: document.getElementById("genero").value,
+                user: document.getElementById("user").value,
+                password: document.getElementById("password").value,
+
+            };
+            //guardar datos en el localstorage
+            localStorage.setItem("formData", JSON.stringify(formData))
+            alert("datos guardados ");
+        })
+    }
+    registrarCuenta()
+</script>
+</html>

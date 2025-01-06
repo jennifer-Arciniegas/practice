@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <script src="https://cdn.tailwindcss.com"></script>
+
+    <title>Document</title>
+</head>
+<body>
+    <main class="grid grid-cols-2">
+        <div class="bg-rose-100 p-4">
+            
+            <form action="" id="jugadores">
+                <label for="alias1"> nombre del jugador 1:</label>
+                <input type="text" name="alias1" id="alias1" class="rounded-lg focus:border-purple-500 focus:outline-none border border-gray-300 m-1">
+                <br>
+                 <label for="alias2"> nombre del jugador 2:</label>
+                <input type="text" name="alias2" id="alias2" class="rounded-lg focus:border-purple-500 focus:outline-none border border-gray-300 m-1">
+                <br>
+                <br>
+                <div class="flex justify-center"> 
+                    <button id="jugar" class="rounded-lg bg-sky-300 p-1 m-1 hover:bg-sky-500">Jugar</button> <br>
+                     <button id="ranking" class="rounded-lg bg-indigo-300 p-1 m-1 hover:bg-indigo-500">ranquin de ganadores</button>
+
+                </div>
+                           
+            </form>
+
+        </div>
+        <div class="bg-sky-300 p-4 flex flex-col items-center">
+            <h3 id="turnojugador">turno de: </h3>
+            <div id="tablero" class="bg-black w-80 grid grid-cols-3 grid-rows-3 gap-2 w-80 h-80 p-1">
+                <div class="bg-white rounded-lg "></div>
+                <div class="bg-white rounded-lg "></div>
+                <div class="bg-white rounded-lg "></div>
+                <div class="bg-white rounded-lg "></div>
+                <div class="bg-white rounded-lg "></div>
+                <div class="bg-white rounded-lg "></div>
+                <div class="bg-white rounded-lg "></div>
+                <div class="bg-white rounded-lg "></div>
+                <div class="bg-white rounded-lg "></div>
+            </div>
+             <h2 id="display">ganador: </h2>
+        </div>
+    </main>
+    
+</body>
+<script>
+ document.addEventListener("DOMContentLoaded", () => {
+        let jugador1 = document.getElementById("alias1");
+        let jugador2 = document.getElementById("alias2");
+        const jugar = document.getElementById("jugar");
+        let turno = document.getElementById("turnojugador");
+        const tablero = document.getElementById("tablero");
+        const celdas = Array.from(tablero.children); // convierte los div hijos del tablero en un array manipulable
+        let ganador = document.getElementById("display")
+        // variables de estado del juego 
+        let jugadorActual;
+        let estadoJuego = ["", "", "", "", "", "", "", "", ""];
+        let juegoActivo = false; // inicia en falso para que se ejecute solo cuando se inice el juego
+
+        // combinaciones ganadoras 
+        const combinacionGanadora =[
+            [0,1,2],
+            [3,4,5],
+            [6,7,8],
+            [0,3,6], //filas
+            [1,4,7],
+            [2,5,8],
+            [0,4,8], // diagonales
+            [2,4,6],
+        ];
+        jugar.addEventListener("click", function iniciarJuego(elemento){
+            elemento.preventDefault(); //evita que el formulario recarge la pagina
+
+            if(!jugador1.value || !jugador2.value){
+                alert("ingrese los nombres de los jugadores");
+                return;
+            }
+
+            juegoActivo = true;
+            jugadorActual = jugador1.value // inicia con el primer jugador
+            turno.textContent = `es el turno del jugador ${jugadorActual}`;
+            estadoJuego.fill(""); // limpia el estaddo de juego osea el array de las combinaciones ingresadas por los jugadores
+            celdas.forEach(celda =>(celda.textContent = "") ); // limpia celdas del tablero 
+            ganador.textContent = ""; // limpia el nombre del ganador cuando se reinicia el juego  
+             
+
+            
+ 
+
+        });
+          
+
+        //logica de las celdas del tablero 
+        celdas.forEach((celda, index) => { // index sera para ubicar la posicion en el array del estado de juego 
+            celda.addEventListener("click", () => {
+                if(!juegoActivo || estadoJuego[index]) return;
+                estadoJuego[index] = jugadorActual === jugador1.value ? "X" : "O"; // si el jugador es 1 entonces "x" si no es (es el jugador 2) entonces "o"
+                celda.textContent = estadoJuego[index];
+
+                //verificar ganadores
+                const resultado = verificarGanador();
+                if(resultado){
+                    ganador.textContent = `El ganador es ${jugadorActual}`;
+                    juegoActivo = false;
+                    return;
+                }
+
+                //empate
+                if(!estadoJuego.includes("")){
+                    ganador.textContent = "Empate"
+                    juegoActivo = false;
+                    return;
+                }
+
+
+                jugadorActual = jugadorActual === jugador1.value ? jugador2.value : jugador1.value
+                turno.textContent = ` Es turno de ${jugadorActual}`
+            })
+
+        });
+        
+
+        function verificarGanador(){
+            for(let combinacion of combinacionGanadora){
+                const [a, b, c] = combinacion;
+                if(estadoJuego[a] && estadoJuego[a] === estadoJuego[b] && estadoJuego[a] === estadoJuego[c]){
+                    return estadoJuego[a]
+                }
+            }
+            return null;
+        }
+ })
+
+
+</script>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Document</title>
+        
+   
+</head>
+<body class=" flex justify-center  items-center m-24">
+    <div id="contenedor" class=" flex justify-center m-4 p-4 border: rounded-lg bg-gradient-to-r from-indigo-300 via-purple-300 to-pink-300 m-0 ">
+       <form action="" id="formu-iniciarsesion">
+        <h2>Inicio de sesion</h2>
+        <br>
+        <label for="user">User:</label>
+        <input type="text" id="user" name="user">
+        <br><br>
+        <label for="password">password</label>
+        <input type="password" id="password" name="password">
+        <br><br>
+       
+            <br><br>
+        <button id="iniciarSession" class="border: rounded-lg bg-rose-300 m-1 p-1" >Iniciar</button>
+        <button id="registro"  class="border: rounded-lg bg-sky-300 m-1 p-1"> <a href="./src/registro.html">Registrarse</a> </button>
+       </form>
+
+    </div>
+    
+</body>
+<script>
+    
+
+    document.getElementById("iniciarSession").addEventListener("click", function(e) {
+        e.preventDefault();
+        //traer datos igresados
+        const usuario = document.getElementById("user").value;
+      const contraceña = document.getElementById("password").value;
+  
+        //traer datos almacenados
+        const storedData = JSON.parse(localStorage.getItem("formData"));
+        
+       
+       if(!storedData){
+        alert("no existe el registro")
+        return;
+       }
+
+        if(usuario === storedData.user && contraceña === storedData.password){
+            alert("inicio de session exitoso");
+            window.location.href="./src/home.html"
+            
+        } else{
+            alert("fallo el inicio de session")
+            
+        }
+    }
+    )
+</script>
+
+</html>

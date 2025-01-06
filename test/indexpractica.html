@@ -91,10 +91,11 @@ document.addEventListener("DOMContentLoaded", ()=>{
         comenzarJuego.addEventListener("click", iniciarJuego); // cuando se de click iniciar el jugo
         showhistorial.addEventListener("click", showTableHistorial); //cuando se de click en el boton mostrar la tabla
         //funciones 
+        
         function iniciarJuego(){
         //prepara el juego
-                let jugador1 = document.getElementById("alias1").value || "jugador 1";
-                let jugador2 = document.getElementById("alias2").value || "jugador 2";
+                jugador1 = document.getElementById("alias1").value || "jugador 1";
+                 jugador2 = document.getElementById("alias2").value || "jugador 2";
 
                 if(!jugador1 || !jugador2){
                         alert("ingrese los nombre de los jugadores");
