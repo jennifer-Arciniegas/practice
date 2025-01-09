@@ -22,8 +22,13 @@
                 <div class="flex justify-center"> 
                     <button id="jugar" class="rounded-lg bg-sky-300 p-1 m-1 hover:bg-sky-500">Jugar</button> <br>
                      <button id="ranking" class="rounded-lg bg-indigo-300 p-1 m-1 hover:bg-indigo-500">ranquin de ganadores</button>
-
+                     <br><br>
+                    
                 </div>
+                <div id="insertarHistorial">
+
+                    </div>
+
                            
             </form>
 
@@ -55,6 +60,11 @@
         const tablero = document.getElementById("tablero");
         const celdas = Array.from(tablero.children); // convierte los div hijos del tablero en un array manipulable
         let ganador = document.getElementById("display")
+        let showHistorial = document.getElementById("ranking");
+        // historial
+        let hisotrial = JSON.parse(localStorage.getItem("ranking")) || []
+        let puntos
+        const espacioHitorial = document.getElementById("insertarHistorial")
         // variables de estado del juego 
         let jugadorActual;
         let estadoJuego = ["", "", "", "", "", "", "", "", ""];
@@ -86,10 +96,6 @@
             celdas.forEach(celda =>(celda.textContent = "") ); // limpia celdas del tablero 
             ganador.textContent = ""; // limpia el nombre del ganador cuando se reinicia el juego  
              
-
-            
- 
-
         });
           
 
@@ -105,13 +111,18 @@
                 if(resultado){
                     ganador.textContent = `El ganador es ${jugadorActual}`;
                     juegoActivo = false;
+                    puntos = 5
+                    guardarenHistorial(jugadorActual, puntos)
                     return;
                 }
 
                 //empate
                 if(!estadoJuego.includes("")){
                     ganador.textContent = "Empate"
+                    puntos = 2
+                    guardarenHistorial([jugador1.value, jugador2.value], puntos);  
                     juegoActivo = false;
+
                     return;
                 }
 
@@ -131,7 +142,47 @@
                 }
             }
             return null;
+        };
+        function guardarenHistorial(ganador){
+            const fecha = new Date().toLocaleString() //hora y fecha del ganador de juego
+            hisotrial.push({ganador, fecha, puntos})
+            localStorage.setItem("ranking", JSON.stringify(hisotrial))
         }
+
+
+        showHistorial.addEventListener("click", function tablaHistorial (e) {
+            e.preventDefault();
+            //borrar tabla acterior en caso de actualizar
+            espacioHitorial.innerHTML = ""
+            // crear tabla 
+            const divHistorial = document.createElement("div")
+            divHistorial.classList.add("tablitaHistorial", "mt-5")
+
+            const tabla = document.createElement("table")
+            tabla.classList.add("table-auto", "mt-5", "border-collapse", "border-inidigo-500")
+
+            const cabecera = document.createElement("tr")
+            cabecera.innerHTML= `
+            <th>Ganador </th>
+            <th> Fecha y hora </th>
+            <th> puntos</th>`;
+            tabla.append(cabecera);
+
+            hisotrial.forEach((elemento) => {
+                const row = document.createElement("tr");
+                row.innerHTML=`
+                <td>${elemento.ganador}</td>
+                <td>${elemento.fecha}</td>
+                <td>${elemento.puntos} </td>`
+                ;
+                tabla.appendChild(row)
+            });
+        divHistorial.appendChild(tabla)
+        espacioHitorial.appendChild(divHistorial)
+
+        })
+
+
  })
 
 

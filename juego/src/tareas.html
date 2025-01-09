@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Document</title>
+</head>
+<body>
+    <main class=" flex  justify-center ">
+        <div class=" bg-rose-300 p-4 w-96 self-end  ">
+            <form action="" id="formu">
+                <h1 > Mis Tareas</h1>
+                <input type="text" name="tarea" id="tarea" required>
+                <br>
+                <button type="submit">Crear Tarea</button>
+            </form>
+            <br>
+
+            <div id="espacio" class="bg-indigo-500">
+               
+            </div>
+            
+        </div>
+    </main>
+    
+</body>
+<script>
+    const tareas = [];
+
+    document.addEventListener("DOMContentLoaded", () =>{
+        let espacio = document.getElementById("espacio")
+        const borrar = document.getElementById("borrarTarea")
+
+        function crearTarea(){
+            document.getElementById("formu").addEventListener("submit", (event) =>{
+                event.preventDefault();
+                function guardarTarea(){
+                     tareas.push({
+                    newTarea: document.getElementById("tarea").value});
+                    localStorage.setItem("tareas", JSON.stringify(tareas))
+                    mostrarTarea()
+                   // alert("tarea creada")
+                }
+               
+                 function mostrarTarea(){
+                    const tareas = JSON.parse(localStorage.getItem("tareas"))
+                    let espacio = document.querySelector("#espacio")
+                    let listado = document.createElement("div")
+                    listado.classList =("grid grid-cols-2")
+                    listado.innerHTML= 
+                    `${tareas.newTarea} 
+                    <div class="flex justify-end" id="borrarTarea"><p>borrar</p></div> `
+
+                    espacio.appendChild(listado)
+                 }
+
+
+                 
+
+                    
+            })
+
+        }
+       
+        
+        crearTarea()
+
+
+
+
+    })
+    
+</script>
+</html>

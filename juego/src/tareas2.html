@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Lista de Tareas</title>
+</head>
+<body>
+    <main class="flex justify-center min-h-screen bg-gray-100 py-8">
+        <div class="bg-rose-300 p-4 w-96 rounded-lg shadow-lg">
+            <h1 class="text-2xl font-bold mb-4">Mis Tareas</h1>
+            <form id="formu">
+                <input type="text" name="tarea" id="tarea" required class="w-full p-2 mb-2 border rounded">
+                <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Crear Tarea</button>
+            </form>
+            <div id="espacio" class="mt-4 space-y-2"></div>
+        </div>
+    </main>
+    
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        let tareas = JSON.parse(localStorage.getItem("tareas")) || [];
+        const espacio = document.getElementById("espacio");
+        const formulario = document.getElementById("formu");
+
+        function guardarTareas() {
+            localStorage.setItem("tareas", JSON.stringify(tareas));
+        }
+
+        function mostrarTareas() {
+            espacio.innerHTML = '';
+            tareas.forEach((tarea, index) => {
+                let listado = document.createElement("div");
+                listado.classList.add("flex", "justify-between", "items-center", "bg-white", "p-3", "rounded", "shadow");
+                listado.innerHTML = `
+                    <span>${tarea.newTarea}</span>
+                    <button onclick="borrarTarea(${index})" class="text-red-500 hover:text-red-700">Borrar</button>
+                `;
+                espacio.appendChild(listado);
+            });
+        }
+
+        function crearTarea(texto) {
+            tareas.push({ newTarea: texto });
+            guardarTareas();
+            mostrarTareas();
+        }
+
+        window.borrarTarea = function(index) {
+            tareas.splice(index, 1);
+            guardarTareas();
+            mostrarTareas();
+        }
+
+        formulario.addEventListener("submit", (event) => {
+            event.preventDefault();
+            const nuevaTarea = document.getElementById("tarea").value.trim();
+            if (nuevaTarea) {
+                crearTarea(nuevaTarea);
+                formulario.reset();
+            }
+        });
+
+        mostrarTareas();
+    });
+    </script>
+</body>
+</html>

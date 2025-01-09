@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Document</title>
+</head>
+<body>
+    <h1> juego de dado</h1>
+    <div class="grid grid-cols-2">
+        <div id="dado1" class="m-2 p-2 ">🎲</div>
+        <div id="dado2" class="m-2 p-2">🎲</div>
+        <button id="Jugar">Lanzar dados</button>
+
+    </div>
+    <div id="resultados"> 
+        
+    </div>
+</body>
+<script>
+    document.addEventListener("DOMContentLoaded", () =>{
+        const jugarBoton =document.getElementById("Jugar"); 
+        const dado1 = document.getElementById("dado1"); 
+        const dado2 = document.getElementById("dado2");
+        const resultado = document.getElementById("resultados");
+
+        //funcion de numero ramdom
+        const rolldie = () =>{
+            return new Promise((resolve) => {
+                const roll = Math.floor(Math.random()* 6) +1;
+                setTimeout(() => resolve(roll), 1000)
+
+            })
+        }
+
+        //logica del juego 
+        jugarBoton.addEventListener("click", async () => {
+            resultado.textContent =" lanzando dados"
+            dado1.textContent ="🎲"
+            dado2.textContent ="🎲"
+            //lanza los dados
+            const da1 = await rolldie();
+            const da2 = await rolldie();
+            //mostrar resultados
+            dado1.textContent = `${da1}`
+            dado2.textContent = `${da2}`
+            if(da1 === da2){
+                resultado = document.createElement("div")
+                resultado.classList.add("bg-sky-300")
+                gano.textContent = "ha ganado"
+            }else{
+                resultado.textContent = "no son iguales perdio"
+            }
+        })
+
+    })
+</script>
+</html>
