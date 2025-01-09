@@ -31,23 +31,18 @@
     document.addEventListener("DOMContentLoaded", () =>{
         let tareas = JSON.parse(localStorage.getItem("tareas")) || [];
         const espacio = document.getElementById("espacio");
+        const formulario = document.getElementById("formu")
         
 
         function guardarTareas (){
             localStorage.setItem("tareas", JSON.stringify(tareas))
         }
-        function crearTarea(texto){
-            tareas.push({
-                newTarea: texto
-            })
-            guardarTareas()
-            mostrarTareas()
-        }
+      
         function mostrarTareas(){
             espacio.innerHTML = "";
             tareas.forEach((tarea, index) => {
                 let listado = document.createElement("div");
-                listado.classList("flex", "justify-beetwen", "items-center")
+                listado.classList.add("flex", "justify-beetwen", "items-center")
                 listado.innerHTML= `
                 <span>${tarea.newTarea}</span>
                 <button onclick = "borrarTarea(${index})">X</button>
@@ -57,22 +52,32 @@
              
                 
             });
+
+
+        }
+            function crearTarea(texto){
+            tareas.push({
+                newTarea: texto
+            })
+            guardarTareas()
+            mostrarTareas()
+            }
             window.borrarTarea = function(index){
                  tareas.splice(index,1);
                  guardarTareas()
+                 mostrarTareas()
                
             
             }
 
-            document.getElementById("formu").addEventListener("submit", (event)=>{
+            formulario.addEventListener("submit", (event)=>{
                 event.preventDefault();
                 const nuevaTarea = document.getElementById("tarea").value
                 if(nuevaTarea){
                     crearTarea(nuevaTarea)
-                    reset()
+                    formulario.reset()
                 }
             }) 
-        }
 
 
         
