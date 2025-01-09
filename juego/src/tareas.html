@@ -9,15 +9,16 @@
 <body>
     <main class=" flex  justify-center ">
         <div class=" bg-rose-300 p-4 w-96 self-end  ">
+             <h1 > Mis Tareas</h1>
             <form action="" id="formu">
-                <h1 > Mis Tareas</h1>
+               
                 <input type="text" name="tarea" id="tarea" required>
                 <br>
                 <button type="submit">Crear Tarea</button>
             </form>
             <br>
 
-            <div id="espacio" class="bg-indigo-500">
+            <div id="espacio" class="mt-4 space-y-2">
                
             </div>
             
@@ -26,49 +27,58 @@
     
 </body>
 <script>
-    const tareas = [];
 
     document.addEventListener("DOMContentLoaded", () =>{
-        let espacio = document.getElementById("espacio")
-        const borrar = document.getElementById("borrarTarea")
-
-        function crearTarea(){
-            document.getElementById("formu").addEventListener("submit", (event) =>{
-                event.preventDefault();
-                function guardarTarea(){
-                     tareas.push({
-                    newTarea: document.getElementById("tarea").value});
-                    localStorage.setItem("tareas", JSON.stringify(tareas))
-                    mostrarTarea()
-                   // alert("tarea creada")
-                }
-               
-                 function mostrarTarea(){
-                    const tareas = JSON.parse(localStorage.getItem("tareas"))
-                    let espacio = document.querySelector("#espacio")
-                    let listado = document.createElement("div")
-                    listado.classList =("grid grid-cols-2")
-                    listado.innerHTML= 
-                    `${tareas.newTarea} 
-                    <div class="flex justify-end" id="borrarTarea"><p>borrar</p></div> `
-
-                    espacio.appendChild(listado)
-                 }
-
-
-                 
-
-                    
-            })
-
-        }
-       
+        let tareas = JSON.parse(localStorage.getItem("tareas")) || [];
+        const espacio = document.getElementById("espacio");
         
-        crearTarea()
+
+        function guardarTareas (){
+            localStorage.setItem("tareas", JSON.stringify(tareas))
+        }
+        function crearTarea(texto){
+            tareas.push({
+                newTarea: texto
+            })
+            guardarTareas()
+            mostrarTareas()
+        }
+        function mostrarTareas(){
+            espacio.innerHTML = "";
+            tareas.forEach((tarea, index) => {
+                let listado = document.createElement("div");
+                listado.classList("flex", "justify-beetwen", "items-center")
+                listado.innerHTML= `
+                <span>${tarea.newTarea}</span>
+                <button onclick = "borrarTarea(${index})">X</button>
+                `;
+                espacio.appendChild(listado)
+
+             
+                
+            });
+            window.borrarTarea = function(index){
+                 tareas.splice(index,1);
+                 guardarTareas()
+               
+            
+            }
+
+            document.getElementById("formu").addEventListener("submit", (event)=>{
+                event.preventDefault();
+                const nuevaTarea = document.getElementById("tarea").value
+                if(nuevaTarea){
+                    crearTarea(nuevaTarea)
+                    reset()
+                }
+            }) 
+        }
 
 
-
-
+        
+        
+        mostrarTareas()
+        
     })
     
 </script>
