@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <script src="https://cdn.tailwindcss.com"></script>
+    <title>Document</title>
+</head>
+<body>
+    <button type="submit" class=""> mostrar listado</button>
+    <div id="espacio"> </div>
+</body>
+<script>
+    const boton = document.querySelector("button")
+    const espacio = document.getElementById("espacio")
+    //consumo de la api
+
+    boton.addEventListener("click", () => {
+
+    fetch("https://jsonplaceholder.typicode.com/users")
+    .then(Response => {
+        if(Response.ok){
+             return  Response.json(); // convertir a json
+        }else{
+            throw new Error("error en la solicitudd " + Response.status);
+        }
+    })
+    .then(data => {
+        espacio.innerHTML = ""; 
+    
+            data.forEach(element => {
+                const carta = document.createElement("div")
+                carta.classList.add("bg-rose-100", "p-3", "m-3", "rounded")
+                carta.innerHTML=`
+                <h1>${element.name}</h1>
+                <h3>${element.email}</h3>
+                `;
+                espacio.appendChild(carta)
+            });
+        
+       
+    })
+    .catch(error => console.error("ha surgido un error", error))
+})
+</script>
+</html>
