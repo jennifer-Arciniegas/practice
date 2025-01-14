@@ -20,48 +20,64 @@
     
     <script>
     document.addEventListener("DOMContentLoaded", () => {
-        let tareas = db.json;
         const espacio = document.getElementById("espacio");
         const formulario = document.getElementById("formu");
 
-        function mostrarTareas() {
+        // Mostrar las tareas en la interfaz
+        function mostrarTareas(tareas) {
             espacio.innerHTML = '';
             tareas.forEach((tarea, index) => {
                 let listado = document.createElement("div");
                 listado.classList.add("flex", "justify-between", "items-center", "bg-white", "p-3", "rounded", "shadow");
                 listado.innerHTML = `
                     <span>${tarea.newTarea}</span>
-                    <button onclick="borrarTarea(${index})" class="text-red-500 hover:text-red-700">Borrar</button>
+                    <button onclick="borrarTarea(${tarea.id})" class="text-red-500 hover:text-red-700">Borrar</button>
                 `;
                 espacio.appendChild(listado);
             });
         }
 
+        // Función para crear una nueva tarea
         function crearTarea(texto) {
-            tareas.push(data);
-            const data ={  
-             newTarea: texto,
-      
+            const data = {  
+                newTarea: texto,
             };
-            fetch("http://localhost:3000/tareas/",{
+            
+            // Realizar la solicitud POST para agregar la tarea
+            fetch("http://localhost:3000/tareas/", {
                 method: "POST",
-                headers:{
+                headers: {
                     "Content-Type": "application/json",
                 },
-                body:JSON.stringify(data)
+                body: JSON.stringify(data),
             })
             .then((response) => response.json())
-            .then((data) => console.log("success",data))
-            .catch((error)=> console.error("Error", error));
-
-            guardarTareas();
-            mostrarTareas();
+            .then((data) => {
+                console.log("Tarea creada con éxito", data);
+                cargarTareas();
+            })
+            .catch((error) => console.error("Error al crear la tarea:", error));
         }
 
-        window.borrarTarea = function(index) {
-            tareas.splice(index, 1);
-            guardarTareas();
-            mostrarTareas();
+        // Función para borrar una tarea
+        window.borrarTarea = function(id) {
+            fetch(`http://localhost:3000/tareas/${id}`, {
+                method: "DELETE",
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log("Tarea eliminada con éxito", data);
+                cargarTareas();
+            })
+            .catch((error) => console.error("Error al eliminar la tarea:", error));
+        }
+
+        // Función para cargar todas las tareas desde el servidor
+        function cargarTareas() {
+            fetch("http://localhost:3000/tareas")
+            .then((response) => response.json())
+            .then((tareas) => mostrarTareas(tareas))
+            .catch((error) => console.error("Error al cargar las tareas:", error));
         }
 
         formulario.addEventListener("submit", (event) => {
@@ -73,7 +89,8 @@
             }
         });
 
-        mostrarTareas();
+        // Cargar las tareas al inicio
+        cargarTareas();
     });
     </script>
 </body>
